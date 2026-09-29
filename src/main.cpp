@@ -24,5 +24,7 @@ int main() {
                   << std::endl;
     }
 
+    //items[0].title = "X";   // навмисна помилка — приватне поле
+
     return 0;
 }

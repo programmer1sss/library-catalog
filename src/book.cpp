@@ -1,5 +1,4 @@
 #include "book.h"
-#include <cassert>
 
 Book::Book(const std::string& title,
            const std::string& author,
@@ -37,33 +36,28 @@ bool Book::isOlderThan(int year) const {
 }
 
 // --- Операції предметної області ---
-// Кожна перевіряє аргумент/стан, повертає bool, і (тимчасово) assert-ить інваріант.
-
 bool Book::lend() {
     if (available_ <= 0) {
-        return false;   // немає що видавати
+        return false;
     }
     --available_;
-    assert(checkInvariant());   // ← тимчасова перевірка
     return true;
 }
 
 bool Book::returnCopy() {
     if (available_ >= totalCopies_) {
-        return false;   // повернення порушило б верхню межу
+        return false;
     }
     ++available_;
-    assert(checkInvariant());   // ← тимчасова перевірка
     return true;
 }
 
 bool Book::addCopies(int n) {
     if (n <= 0) {
-        return false;   // некоректна кількість
+        return false;
     }
     totalCopies_ += n;
     available_ += n;
-    assert(checkInvariant());   // ← тимчасова перевірка
     return true;
 }
 

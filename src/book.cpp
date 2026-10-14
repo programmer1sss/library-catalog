@@ -1,4 +1,5 @@
 #include "book.h"
+#include <cassert>
 
 Book::Book(const std::string& title,
            const std::string& author,
@@ -14,6 +15,7 @@ Book::Book(const std::string& title,
 {
 }
 
+// --- Гетери ---
 const std::string& Book::getTitle() const { return title_; }
 const std::string& Book::getAuthor() const { return author_; }
 const std::string& Book::getIsbn() const { return isbn_; }
@@ -21,6 +23,7 @@ int Book::getYear() const { return year_; }
 int Book::getTotalCopies() const { return totalCopies_; }
 int Book::getAvailableCopies() const { return available_; }
 
+// --- Обчислювальні методи ---
 int Book::lentOut() const {
     return totalCopies_ - available_;
 }
@@ -33,29 +36,46 @@ bool Book::isOlderThan(int year) const {
     return year_ < year;
 }
 
-void Book::lend() {
-    if (available_ > 0) {
-        --available_;
+// --- Операції предметної області ---
+// Кожна перевіряє аргумент/стан, повертає bool, і (тимчасово) assert-ить інваріант.
+
+bool Book::lend() {
+    if (available_ <= 0) {
+        return false;   // немає що видавати
     }
+    --available_;
+    assert(checkInvariant());   // ← тимчасова перевірка
+    return true;
 }
 
-void Book::returnCopy() {
-    if (available_ < totalCopies_) {
-        ++available_;
+bool Book::returnCopy() {
+    if (available_ >= totalCopies_) {
+        return false;   // повернення порушило б верхню межу
     }
+    ++available_;
+    assert(checkInvariant());   // ← тимчасова перевірка
+    return true;
 }
 
-// Перевірка інваріанта — буквально повторює 5 пунктів із коментаря над класом,
-// по одній умові на пункт, у тому самому порядку.
+bool Book::addCopies(int n) {
+    if (n <= 0) {
+        return false;   // некоректна кількість
+    }
+    totalCopies_ += n;
+    available_ += n;
+    assert(checkInvariant());   // ← тимчасова перевірка
+    return true;
+}
+
+// --- Інваріант ---
 bool Book::checkInvariant() const {
-    return !title_.empty() &&                                        // 1
-           year_ >= 1450 && year_ <= 2026 &&                         // 2
-           (isbn_.empty() || isValidIsbn(isbn_)) &&                  // 3
-           totalCopies_ >= 0 &&                                      // 4
-           available_ >= 0 && available_ <= totalCopies_;            // 5
+    return !title_.empty() &&
+           year_ >= 1450 && year_ <= 2026 &&
+           (isbn_.empty() || isValidIsbn(isbn_)) &&
+           totalCopies_ >= 0 &&
+           available_ >= 0 && available_ <= totalCopies_;
 }
 
-// Допоміжний метод: ISBN або порожній, або містить рівно 13 цифр
 bool Book::isValidIsbn(const std::string& isbn) {
     if (isbn.size() != 13) {
         return false;

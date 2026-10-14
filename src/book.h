@@ -16,27 +16,26 @@ class Book {
        int year,
        int totalCopies);
 
-  // --- Константні методи доступу ---
-  // Рядки повертаємо як const std::string& (без копіювання)
+  // --- Константні гетери ---
   const std::string& getTitle() const;
   const std::string& getAuthor() const;
   const std::string& getIsbn() const;
-
-  // Числа повертаємо за значенням (дешево копіювати)
   int getYear() const;
   int getTotalCopies() const;
   int getAvailableCopies() const;
 
-  // --- Обчислювальні методи (нічого не зберігають) ---
-  int lentOut() const;            // totalCopies_ - available_
-  bool isAvailable() const;       // available_ > 0
-  bool isOlderThan(int year) const; // year_ < year
+  // --- Обчислювальні методи ---
+  int lentOut() const;
+  bool isAvailable() const;
+  bool isOlderThan(int year) const;
 
-  // --- Методи, що змінюють стан ---
-  void lend();
-  void returnCopy();
+  // --- Операції предметної області (замість сетерів) ---
+  // Кожна повертає true, якщо операція виконана, і false, якщо її відхилено.
+  bool lend();               // видати один примірник
+  bool returnCopy();         // повернути один примірник
+  bool addCopies(int n);     // додати n примірників
 
-  // Перевірка інваріанта
+  // --- Перевірка інваріанта ---
   bool checkInvariant() const;
 
  private:

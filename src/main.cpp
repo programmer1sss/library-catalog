@@ -1,9 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <cassert>
 #include "book.h"
 
-// Функція приймає книгу за константним посиланням.
-// Якщо якийсь гетер не позначено const — компілятор видасть помилку тут.
 void print(const Book& b) {
     std::cout << "Назва: " << b.getTitle()
               << " | Автор: " << b.getAuthor()
@@ -30,10 +29,39 @@ int main() {
         Book("The Pragmatic Programmer", "Andrew Hunt", "9780201616224", 1999, 4)
     };
 
-    // Виклик функції з const-посиланням
     for (const auto& book : catalog) {
         print(book);
     }
+
+    std::cout << "\n--- Демонстрація операцій на першій книзі ---" << std::endl;
+    Book& b = catalog[0];
+    print(b);
+
+    std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
+    print(b);
+
+    std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
+    print(b);
+
+    std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
+    print(b);
+
+    // Усі три примірники видані — наступний lend() має повернути false
+    std::cout << "\nlend() (немає що видавати) -> "
+              << (b.lend() ? "true" : "false") << std::endl;
+
+    std::cout << "\nreturnCopy() -> " << (b.returnCopy() ? "true" : "false") << std::endl;
+    print(b);
+
+    std::cout << "\naddCopies(2) -> " << (b.addCopies(2) ? "true" : "false") << std::endl;
+    print(b);
+
+    std::cout << "\naddCopies(0) (некоректно) -> "
+              << (b.addCopies(0) ? "true" : "false") << std::endl;
+    print(b);
+
+    // Фінальна перевірка: після всіх операцій інваріант зберігся
+    assert(b.checkInvariant());
 
     return 0;
 }

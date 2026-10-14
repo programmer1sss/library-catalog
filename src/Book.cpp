@@ -1,7 +1,7 @@
 #include "Book.h"
 
-Book::Book(const std::string& title,
-           const std::string& author,
+Book::Book(const std::string &title,
+           const std::string &author,
            int year,
            int pages)
     : title(title),
@@ -11,22 +11,27 @@ Book::Book(const std::string& title,
 {
 }
 
-const std::string& Book::getTitle() const {
+const std::string &Book::getTitle() const
+{
     return title;
 }
 
-const std::string& Book::getAuthor() const {
+const std::string &Book::getAuthor() const
+{
     return author;
 }
 
-int Book::getYear() const {
+int Book::getYear() const
+{
     return year;
 }
 
-int Book::getPages() const {
+int Book::getPages() const
+{
     return pages;
 }
 
-bool Book::isOlderThan(int year) const {
+bool Book::isOlderThan(int year) const
+{
     return this->year < year;
 }

@@ -1,3 +1,5 @@
 build/
 *.o
 *.exe
+src/main
+.DS_Store

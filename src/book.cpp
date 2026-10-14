@@ -1,37 +1,49 @@
-#include "Book.h"
+#include "book.h"
 
-Book::Book(const std::string &title,
-           const std::string &author,
+// Конструктор: поля ініціалізуються у списку ініціалізації
+Book::Book(const std::string& title,
+           const std::string& author,
+           const std::string& isbn,
            int year,
-           int pages)
-    : title(title),
-      author(author),
-      year(year),
-      pages(pages)
+           int totalCopies)
+    : title_(title),
+      author_(author),
+      isbn_(isbn),
+      year_(year),
+      totalCopies_(totalCopies),
+      available_(totalCopies)   // на старті всі примірники доступні
 {
 }
 
-const std::string &Book::getTitle() const
-{
-    return title;
+const std::string& Book::getTitle() const { return title_; }
+const std::string& Book::getAuthor() const { return author_; }
+const std::string& Book::getIsbn() const { return isbn_; }
+int Book::getYear() const { return year_; }
+int Book::getTotalCopies() const { return totalCopies_; }
+int Book::getAvailableCopies() const { return available_; }
+
+// Похідні величини — обчислюються з полів, не зберігаються
+int Book::lentOut() const {
+    return totalCopies_ - available_;
 }
 
-const std::string &Book::getAuthor() const
-{
-    return author;
+bool Book::isAvailable() const {
+    return available_ > 0;
 }
 
-int Book::getYear() const
-{
-    return year;
+bool Book::isOlderThan(int year) const {
+    return year_ < year;
 }
 
-int Book::getPages() const
-{
-    return pages;
+// Методи обліку
+void Book::lend() {
+    if (available_ > 0) {
+        --available_;
+    }
 }
 
-bool Book::isOlderThan(int year) const
-{
-    return this->year < year;
+void Book::returnCopy() {
+    if (available_ < totalCopies_) {
+        ++available_;
+    }
 }

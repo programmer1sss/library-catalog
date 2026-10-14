@@ -1,30 +1,30 @@
 #include <iostream>
 #include <vector>
-#include <string>
-#include "Book.h"
+#include "book.h"
 
 int main() {
-    std::cout << "Варіант: Library Catalog" << std::endl;
-    std::cout << "------------------------" << std::endl;
+    std::cout << "Каталог книг" << std::endl;
+    std::cout << "------------" << std::endl;
 
-    std::vector<Book> items = {
-        Book("1984",              "George Orwell",   1949, 328),
-        Book("The Hobbit",        "J.R.R. Tolkien",  1937, 310),
-        Book("Clean Code",        "Robert C. Martin", 2008, 464),
-        Book("The Pragmatic Programmer", "Andrew Hunt", 1999, 352)
+    std::vector<Book> catalog = {
+        Book("1984", "George Orwell", "9780451524935", 1949, 3),
+        Book("The Hobbit", "J.R.R. Tolkien", "9780547928227", 1937, 2),
+        Book("Clean Code", "Robert C. Martin", "9780132350884", 2008, 1),
+        Book("The Pragmatic Programmer", "Andrew Hunt", "9780201616224", 1999, 4)
     };
 
-    for (const auto& item : items) {
-        std::cout << "Назва: "      << item.getTitle()
-                  << " | Автор: "   << item.getAuthor()
-                  << " | Рік: "     << item.getYear()
-                  << " | Сторінок: " << item.getPages()
+    for (const auto& book : catalog) {
+        std::cout << "Назва: " << book.getTitle()
+                  << " | Автор: " << book.getAuthor()
+                  << " | ISBN: " << book.getIsbn()
+                  << " | Рік: " << book.getYear()
+                  << " | Усього: " << book.getTotalCopies()
+                  << " | Доступно: " << book.getAvailableCopies()
+                  << " | Видано: " << book.lentOut()
                   << " | Старша за 2000? "
-                  << (item.isOlderThan(2000) ? "так" : "ні")
+                  << (book.isOlderThan(2000) ? "так" : "ні")
                   << std::endl;
     }
-
-    //items[0].title = "X";   // навмисна помилка — приватне поле
 
     return 0;
 }

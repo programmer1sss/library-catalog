@@ -10,31 +10,33 @@
 //  5. 0 <= available_ <= totalCopies_.
 class Book {
  public:
-  // Конструктор приймає всі значущі поля
   Book(const std::string& title,
        const std::string& author,
        const std::string& isbn,
        int year,
        int totalCopies);
 
-  // Константні гетери
+  // --- Константні методи доступу ---
+  // Рядки повертаємо як const std::string& (без копіювання)
   const std::string& getTitle() const;
   const std::string& getAuthor() const;
   const std::string& getIsbn() const;
+
+  // Числа повертаємо за значенням (дешево копіювати)
   int getYear() const;
   int getTotalCopies() const;
   int getAvailableCopies() const;
 
-  // Похідні величини
-  int lentOut() const;
-  bool isAvailable() const;
-  bool isOlderThan(int year) const;
+  // --- Обчислювальні методи (нічого не зберігають) ---
+  int lentOut() const;            // totalCopies_ - available_
+  bool isAvailable() const;       // available_ > 0
+  bool isOlderThan(int year) const; // year_ < year
 
-  // Методи обліку
+  // --- Методи, що змінюють стан ---
   void lend();
   void returnCopy();
 
-  // Перевірка інваріанта — приватна, лише для внутрішнього використання
+  // Перевірка інваріанта
   bool checkInvariant() const;
 
  private:
@@ -45,6 +47,5 @@ class Book {
   int totalCopies_ = 0;
   int available_ = 0;
 
-  // Допоміжний статичний метод — перевіряє формат ISBN
   static bool isValidIsbn(const std::string& isbn);
 };

@@ -3,26 +3,27 @@
 #include <vector>
 #include "book.h"
 
-// Статичний об'єкт: ctor — до main, dtor — після main.
 static Book gStatic{"Статичний", 1900};
 
 int main() {
     std::clog << "--- початок main ---\n";
 
-    Book onStack{"Автоматичний", 2020};   // ctor тут, dtor — в кінці main (LIFO з onStack)
+    Book onStack{"Автоматичний", 2020};
 
     {
-        Book inner{"Вкладений", 2021};    // ctor тут, dtor — на закритті }
+        Book inner{"Вкладений", 2021};
     }
 
-    Book* leaked = new Book{"Забутий", 2022};   // ctor є, dtor — НЕ буде (витік)
-    (void)leaked;                                // щоб -Wunused-variable не сварився
+    // Було: Book* leaked = new Book{"Забутий", 2022};
+    // Стало: RAII — без витоку
+    auto leaked = std::make_unique<Book>("Забутий", 2022);
+    (void)leaked;   // запобіжник від -Wunused-variable (хоча unique_ptr не потребує)
 
-    auto owned = std::make_unique<Book>("Керований", 2023);   // ctor, dtor — в кінці main
+    auto owned = std::make_unique<Book>("Керований", 2023);
 
     std::vector<Book> shelf;
     shelf.reserve(2);
-    shelf.emplace_back("У векторі", 2024);     // ctor у сховищі vector, dtor — при знищенні shelf
+    shelf.emplace_back("У векторі", 2024);
 
     std::clog << "--- кінець main ---\n";
     return 0;

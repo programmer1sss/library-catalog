@@ -1,29 +1,40 @@
 cmake_minimum_required(VERSION 3.16)
 project(library_catalog CXX)
 
+# ── Глобальний дефолт; кожна ціль додатково фіксує cxx_std_17 ──
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# ─── Основна ціль ───
+# ── Опція санітайзерів ──
+option(ENABLE_SANITIZERS "Build with ASan and UBSan" OFF)
+
+# ── Набір попереджень, спільний для всіх цілей ──
+set(PROJECT_WARNINGS -Wall -Wextra -Wpedantic)
+
+# ── Основна ціль ──
 add_executable(library_catalog
     src/main.cpp
     src/book.cpp
 )
 
+target_compile_features(library_catalog PRIVATE cxx_std_17)
+
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(library_catalog PRIVATE
-        -Wall -Wextra
-        -fsanitize=address,undefined
-        -fno-omit-frame-pointer
-        -g
-    )
-    target_link_options(library_catalog PRIVATE
-        -fsanitize=address,undefined
-    )
+    target_compile_options(library_catalog PRIVATE ${PROJECT_WARNINGS} -g)
+    if(ENABLE_SANITIZERS)
+        target_compile_options(library_catalog PRIVATE
+            -fsanitize=address,undefined
+            -fno-omit-frame-pointer
+            -g
+        )
+        target_link_options(library_catalog PRIVATE
+            -fsanitize=address,undefined
+        )
+    endif()
 endif()
 
-# ─── Тести ───
+# ── Тести ──
 enable_testing()
 
 include(FetchContent)
@@ -32,7 +43,6 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG        v1.14.0
 )
-# Для Windows: уникнути конфлікту CRT
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
@@ -41,6 +51,7 @@ add_executable(book_test
     src/book.cpp
 )
 
+target_compile_features(book_test PRIVATE cxx_std_17)
 target_include_directories(book_test PRIVATE src)
 
 target_link_libraries(book_test
@@ -49,15 +60,17 @@ target_link_libraries(book_test
 )
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(book_test PRIVATE
-        -Wall -Wextra
-        -fsanitize=address,undefined
-        -fno-omit-frame-pointer
-        -g
-    )
-    target_link_options(book_test PRIVATE
-        -fsanitize=address,undefined
-    )
+    target_compile_options(book_test PRIVATE ${PROJECT_WARNINGS} -g)
+    if(ENABLE_SANITIZERS)
+        target_compile_options(book_test PRIVATE
+            -fsanitize=address,undefined
+            -fno-omit-frame-pointer
+            -g
+        )
+        target_link_options(book_test PRIVATE
+            -fsanitize=address,undefined
+        )
+    endif()
 endif()
 
 include(GoogleTest)

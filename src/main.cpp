@@ -3,7 +3,8 @@
 #include <cassert>
 #include "book.h"
 
-void print(const Book& b) {
+void print(const Book &b)
+{
     std::cout << "Назва: " << b.getTitle()
               << " | Автор: " << b.getAuthor()
               << " | ISBN: " << b.getIsbn()
@@ -18,23 +19,25 @@ void print(const Book& b) {
               << std::endl;
 }
 
-int main() {
+int main()
+{
     std::cout << "Каталог книг" << std::endl;
     std::cout << "------------" << std::endl;
 
-    std::vector<Book> catalog = {
-        Book("1984", "George Orwell", "9780451524935", 1949, 3),
-        Book("The Hobbit", "J.R.R. Tolkien", "9780547928227", 1937, 2),
-        Book("Clean Code", "Robert C. Martin", "9780132350884", 2008, 1),
-        Book("The Pragmatic Programmer", "Andrew Hunt", "9780201616224", 1999, 4)
-    };
+    std::vector<Book> catalog;
+    catalog.reserve(4); // щоб не було реаллокацій
+    catalog.emplace_back("1984", "George Orwell", "9780451524935", 1949, 3);
+    catalog.emplace_back("The Hobbit", "J.R.R. Tolkien", "9780547928227", 1937, 2);
+    catalog.emplace_back("Clean Code", "Robert C. Martin", "9780132350884", 2008, 1);
+    catalog.emplace_back("The Pragmatic Programmer", "Andrew Hunt", "9780201616224", 1999, 4);
 
-    for (const auto& book : catalog) {
+    for (const auto &book : catalog)
+    {
         print(book);
     }
 
     std::cout << "\n--- Демонстрація операцій на першій книзі ---" << std::endl;
-    Book& b = catalog[0];
+    Book &b = catalog[0];
     print(b);
 
     std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
@@ -65,3 +68,6 @@ int main() {
 
     return 0;
 }
+
+
+

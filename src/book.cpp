@@ -1,9 +1,19 @@
 #include "book.h"
 
+#include <iostream>    // std::clog
 #include <stdexcept>
 #include <string>
-#include <utility>   // std::move
+#include <utility>     // std::move
 
+namespace {
+int gLive = 0;
+}
+
+// --- Конструктор за замовчуванням: делегує повному ---
+Book::Book()
+    : Book("(untitled)", "", "", 1450, 0) {}
+
+// --- Повний конструктор: єдине місце, де інкрементується gLive ---
 Book::Book(std::string title,
            std::string author,
            std::string isbn,
@@ -16,6 +26,7 @@ Book::Book(std::string title,
       totalCopies_(totalCopies),
       available_(totalCopies)
 {
+    // Перевірки інваріанту — у тілі, після ініціалізації полів.
     if (title_.empty()) {
         throw std::invalid_argument("Book: empty title");
     }
@@ -28,6 +39,21 @@ Book::Book(std::string title,
     if (totalCopies_ < 0) {
         throw std::invalid_argument("Book: totalCopies must be >= 0");
     }
+
+    // Логуємо ТІЛЬКИ після успішної перевірки інваріанту,
+    // щоб не було "ctor" для об'єкта, який одразу кине виняток.
+    ++gLive;
+    std::clog << "ctor  " << title_ << "  live=" << gLive << '\n';
+}
+
+// --- Скорочений конструктор: делегує повному ---
+Book::Book(std::string title)
+    : Book(std::move(title), std::string{}, std::string{}, 1450, 0) {}
+
+// --- Деструктор ---
+Book::~Book() {
+    --gLive;
+    std::clog << "dtor  " << title_ << "  live=" << gLive << '\n';
 }
 
 // --- Гетери ---
@@ -41,7 +67,7 @@ int Book::getAvailableCopies() const { return available_; }
 // --- Обчислювальні методи ---
 int Book::lentOut() const { return totalCopies_ - available_; }
 bool Book::isAvailable() const { return available_ > 0; }
-bool Book::isOlderThan(int year) const { return year_ < year; }
+bool Book::isOlderThan(int y) const { return year_ < y; }
 
 // --- Операції ---
 bool Book::lend() {

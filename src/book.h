@@ -10,13 +10,31 @@
 //  5. 0 <= available_ <= totalCopies_.
 class Book {
  public:
-  Book(const std::string title,
-       const std::string author,
-       const std::string isbn,
+  // 1. Конструктор за замовчуванням — порожній, але коректний об'єкт.
+  //    Реалізований у .cpp (делегує повному), щоб інкрементувати gLive.
+  Book();
+
+  // 2. Повний конструктор — усі параметри.
+  Book(std::string title,
+       std::string author,
+       std::string isbn,
        int year,
        int totalCopies);
 
-  // --- Константні гетери ---
+  // 3. Скорочений конструктор — делегує повному.
+  explicit Book(std::string title);
+
+  // 4. Явний деструктор — декрементує gLive і логує в std::clog.
+  ~Book();
+
+  // Забороняємо копіювання/переміщення, поки не вирішимо, як їх рахувати.
+  // (Інакше gLive розсинхронізується: копія не викличе ctor, але викличе dtor.)
+  Book(const Book&) = delete;
+  Book& operator=(const Book&) = delete;
+  Book(Book&&) = delete;
+  Book& operator=(Book&&) = delete;
+
+  // --- Гетери ---
   const std::string& getTitle() const;
   const std::string& getAuthor() const;
   const std::string& getIsbn() const;
@@ -29,17 +47,16 @@ class Book {
   bool isAvailable() const;
   bool isOlderThan(int year) const;
 
-  // --- Операції предметної області (замість сетерів) ---
-  // Кожна повертає true, якщо операція виконана, і false, якщо її відхилено.
-  bool lend();               // видати один примірник
-  bool returnCopy();         // повернути один примірник
-  bool addCopies(int n);     // додати n примірників
+  // --- Операції ---
+  bool lend();
+  bool returnCopy();
+  bool addCopies(int n);
 
   // --- Перевірка інваріанта ---
   bool checkInvariant() const;
 
  private:
-  std::string title_;
+  std::string title_ = "(untitled)";
   std::string author_;
   std::string isbn_;
   int year_ = 1450;

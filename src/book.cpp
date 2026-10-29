@@ -47,8 +47,49 @@ Book::Book(std::string title,
 }
 
 // --- Скорочений конструктор: делегує повному ---
-Book::Book(std::string title)
-    : Book(std::move(title), std::string{}, std::string{}, 1450, 0) {}
+Book::Book(std::string title, int year)
+    : Book(std::move(title), std::string{}, std::string{}, year, 0) {}
+
+// --- Переміщувальний конструктор ---
+// gLive НЕ змінюємо: об'єкт не створюється і не знищується, лише переїжджає.
+Book::Book(Book&& other) noexcept
+    : title_(std::move(other.title_)),
+      author_(std::move(other.author_)),
+      isbn_(std::move(other.isbn_)),
+      year_(other.year_),
+      totalCopies_(other.totalCopies_),
+      available_(other.available_)
+{
+    std::clog << "move  " << title_ << "  live=" << gLive << '\n';
+
+    // moved-from: валідний, але «порожній» стан
+    other.title_ = "(moved-from)";
+    other.author_.clear();
+    other.isbn_.clear();
+    other.year_ = 1450;
+    other.totalCopies_ = 0;
+    other.available_ = 0;
+}
+
+// --- Переміщувальне присвоєння ---
+Book& Book::operator=(Book&& other) noexcept {
+    if (this != &other) {
+        title_ = std::move(other.title_);
+        author_ = std::move(other.author_);
+        isbn_ = std::move(other.isbn_);
+        year_ = other.year_;
+        totalCopies_ = other.totalCopies_;
+        available_ = other.available_;
+
+        other.title_ = "(moved-from)";
+        other.author_.clear();
+        other.isbn_.clear();
+        other.year_ = 1450;
+        other.totalCopies_ = 0;
+        other.available_ = 0;
+    }
+    return *this;
+}
 
 // --- Деструктор ---
 Book::~Book() {

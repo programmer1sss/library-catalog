@@ -21,3 +21,7 @@ src/main
 
 # macOS
 .DS_Store
+
+# Local demo binaries
+/lifetime_demo
+/main_demo

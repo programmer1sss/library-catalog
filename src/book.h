@@ -8,8 +8,9 @@
 //  3. isbn_ порожній або містить рівно 13 цифр;
 //  4. totalCopies_ >= 0;
 //  5. 0 <= available_ <= totalCopies_.
-class Book {
- public:
+class Book
+{
+public:
   // 1. Конструктор за замовчуванням — порожній, але коректний об'єкт.
   //    Реалізований у .cpp (делегує повному), щоб інкрементувати gLive.
   Book();
@@ -22,22 +23,22 @@ class Book {
        int totalCopies);
 
   // 3. Скорочений конструктор — делегує повному.
-  explicit Book(std::string title);
+  Book(std::string title, int year);
 
   // 4. Явний деструктор — декрементує gLive і логує в std::clog.
   ~Book();
 
   // Забороняємо копіювання/переміщення, поки не вирішимо, як їх рахувати.
   // (Інакше gLive розсинхронізується: копія не викличе ctor, але викличе dtor.)
-  Book(const Book&) = delete;
-  Book& operator=(const Book&) = delete;
-  Book(Book&&) = delete;
-  Book& operator=(Book&&) = delete;
+  Book(const Book &) = delete;
+  Book &operator=(const Book &) = delete;
+  Book(Book &&other) noexcept;
+  Book &operator=(Book &&other) noexcept;
 
   // --- Гетери ---
-  const std::string& getTitle() const;
-  const std::string& getAuthor() const;
-  const std::string& getIsbn() const;
+  const std::string &getTitle() const;
+  const std::string &getAuthor() const;
+  const std::string &getIsbn() const;
   int getYear() const;
   int getTotalCopies() const;
   int getAvailableCopies() const;
@@ -55,7 +56,7 @@ class Book {
   // --- Перевірка інваріанта ---
   bool checkInvariant() const;
 
- private:
+private:
   std::string title_ = "(untitled)";
   std::string author_;
   std::string isbn_;
@@ -63,5 +64,5 @@ class Book {
   int totalCopies_ = 0;
   int available_ = 0;
 
-  static bool isValidIsbn(const std::string& isbn);
+  static bool isValidIsbn(const std::string &isbn);
 };

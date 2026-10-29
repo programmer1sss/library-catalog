@@ -10,9 +10,9 @@
 //  5. 0 <= available_ <= totalCopies_.
 class Book {
  public:
-  Book(const std::string& title,
-       const std::string& author,
-       const std::string& isbn,
+  Book(const std::string title,
+       const std::string author,
+       const std::string isbn,
        int year,
        int totalCopies);
 

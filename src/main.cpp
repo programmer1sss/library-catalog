@@ -1,30 +1,73 @@
 #include <iostream>
 #include <vector>
-#include <string>
-#include "Book.h"
+#include <cassert>
+#include "book.h"
 
-int main() {
-    std::cout << "Варіант: Library Catalog" << std::endl;
-    std::cout << "------------------------" << std::endl;
+void print(const Book &b)
+{
+    std::cout << "Назва: " << b.getTitle()
+              << " | Автор: " << b.getAuthor()
+              << " | ISBN: " << b.getIsbn()
+              << " | Рік: " << b.getYear()
+              << " | Усього: " << b.getTotalCopies()
+              << " | Доступно: " << b.getAvailableCopies()
+              << " | Видано: " << b.lentOut()
+              << " | Є в наявності? "
+              << (b.isAvailable() ? "так" : "ні")
+              << " | Старша за 2000? "
+              << (b.isOlderThan(2000) ? "так" : "ні")
+              << std::endl;
+}
 
-    std::vector<Book> items = {
-        Book("1984",              "George Orwell",   1949, 328),
-        Book("The Hobbit",        "J.R.R. Tolkien",  1937, 310),
-        Book("Clean Code",        "Robert C. Martin", 2008, 464),
-        Book("The Pragmatic Programmer", "Andrew Hunt", 1999, 352)
-    };
+int main()
+{
+    std::cout << "Каталог книг" << std::endl;
+    std::cout << "------------" << std::endl;
 
-    for (const auto& item : items) {
-        std::cout << "Назва: "      << item.getTitle()
-                  << " | Автор: "   << item.getAuthor()
-                  << " | Рік: "     << item.getYear()
-                  << " | Сторінок: " << item.getPages()
-                  << " | Старша за 2000? "
-                  << (item.isOlderThan(2000) ? "так" : "ні")
-                  << std::endl;
+    std::vector<Book> catalog;
+    catalog.reserve(4); // щоб не було реаллокацій
+    catalog.emplace_back("1984", "George Orwell", "9780451524935", 1949, 3);
+    catalog.emplace_back("The Hobbit", "J.R.R. Tolkien", "9780547928227", 1937, 2);
+    catalog.emplace_back("Clean Code", "Robert C. Martin", "9780132350884", 2008, 1);
+    catalog.emplace_back("The Pragmatic Programmer", "Andrew Hunt", "9780201616224", 1999, 4);
+
+    for (const auto &book : catalog)
+    {
+        print(book);
     }
 
-    //items[0].title = "X";   // навмисна помилка — приватне поле
+    std::cout << "\n--- Демонстрація операцій на першій книзі ---" << std::endl;
+    Book &b = catalog[0];
+    print(b);
+
+    std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
+    print(b);
+
+    std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
+    print(b);
+
+    std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
+    print(b);
+
+    // Усі три примірники видані — наступний lend() має повернути false
+    std::cout << "\nlend() (немає що видавати) -> "
+              << (b.lend() ? "true" : "false") << std::endl;
+
+    std::cout << "\nreturnCopy() -> " << (b.returnCopy() ? "true" : "false") << std::endl;
+    print(b);
+
+    std::cout << "\naddCopies(2) -> " << (b.addCopies(2) ? "true" : "false") << std::endl;
+    print(b);
+
+    std::cout << "\naddCopies(0) (некоректно) -> "
+              << (b.addCopies(0) ? "true" : "false") << std::endl;
+    print(b);
+
+    // Фінальна перевірка: після всіх операцій інваріант зберігся
+    assert(b.checkInvariant());
 
     return 0;
 }
+
+
+

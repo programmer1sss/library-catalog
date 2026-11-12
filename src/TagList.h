@@ -3,24 +3,23 @@
 #include <cstddef>
 #include <string>
 
-class TagList
-{
+class TagList {
 public:
     TagList() = default;
     explicit TagList(std::size_t capacity);
-    ~TagList();  
+    ~TagList();
 
-    TagList(const TagList& other);            
-    TagList& operator=(const TagList&) = delete;  
+    TagList(const TagList& other);              
+    TagList& operator=(TagList other);          
 
-    void add(const std::string &tag);
+    void add(const std::string& tag);
     std::size_t size() const { return size_; }
-
     const std::string& at(std::size_t i) const { return items_[i]; }
 
-
 private:
-    std::string *items_ = nullptr; // власний блок пам'яті
-    std::size_t size_ = 0;
-    std::size_t capacity_ = 0;
+    std::string* items_ = nullptr;
+    std::size_t  size_ = 0;
+    std::size_t  capacity_ = 0;
+
+    friend void swap(TagList& a, TagList& b) noexcept;   // ← вільна функція
 };

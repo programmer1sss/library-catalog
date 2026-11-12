@@ -27,3 +27,5 @@ src/main
 /lifetime_demo
 /main_demo
 /taglist_demo
+build/
+build-asan/

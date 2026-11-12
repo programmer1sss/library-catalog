@@ -5,21 +5,28 @@
 
 TagList::TagList(std::size_t capacity)
     : items_(capacity > 0 ? new std::string[capacity] : nullptr),
-    size_(0),
-    capacity_(capacity)
+      size_(0),
+      capacity_(capacity)
 {
 }
 
-TagList::~TagList() {          
+TagList::TagList(const TagList& other)
+    : items_(other.capacity_ > 0 ? new std::string[other.capacity_] : nullptr),
+      size_(other.size_),
+      capacity_(other.capacity_)
+{
+    for (std::size_t i = 0; i < size_; ++i) {
+        items_[i] = other.items_[i];   // поелементна копія
+    }
+}
+
+TagList::~TagList() {
     delete[] items_;
 }
 
-void TagList::add(const std::string &tag)
-{
+void TagList::add(const std::string& tag) {
     if (size_ >= capacity_)
-    {
         throw std::out_of_range("TagList: capacity exceeded");
-    }
     items_[size_] = tag;
     ++size_;
 }

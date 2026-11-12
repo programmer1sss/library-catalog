@@ -2,6 +2,7 @@
 #include <vector>
 #include <cassert>
 #include "book.h"
+#include "TagList.h"
 
 void print(const Book &b)
 {
@@ -66,8 +67,19 @@ int main()
     // Фінальна перевірка: після всіх операцій інваріант зберігся
     assert(b.checkInvariant());
 
+    //+++++++++++++++++++++++++++++
+    std::cout << "TagList demo (крок 1: без деструктора)\n";
+
+    TagList tags(4);
+    tags.add("cpp");
+    tags.add("raii");
+
+    std::cout << "size = " << tags.size() << '\n';
+    // items_ — private, тому для демонстрації виводимо лише кількість.
+    // Якщо хочете побачити вміст — тимчасово додайте гетер або friend,
+    // але для кроку 1 достатньо size().
+
+    std::cout << "Готово. ASan має повідомити про витік пам'яті.\n";
+
     return 0;
 }
-
-
-

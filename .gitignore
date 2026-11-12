@@ -25,3 +25,4 @@ src/main
 # Local demo binaries
 /lifetime_demo
 /main_demo
+/taglist_demo

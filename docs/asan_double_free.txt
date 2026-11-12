@@ -1,0 +1,15 @@
+==18454==AddressSanitizer: loaded array cookie from free-d memory; expect a double-free report
+=================================================================
+==18454==ERROR: AddressSanitizer: attempting double-free on 0x60b000000040 in thread T0:
+    #0 0x10c1c6e1d in wrap__ZdaPv+0x7d (libclang_rt.asan_osx_dynamic.dylib:x86_64h+0x50e1d)
+    #1 0x10bba11f8 in TagList::~TagList() TagList.cpp:14
+    #2 0x10bba1248 in TagList::~TagList() TagList.cpp:13
+    #3 0x10bb9c561 in main taglist_demo.cpp:22
+    #4 0x7fff20832f3c in start+0x0 (libdyld.dylib:x86_64+0x15f3c)
+
+0x60b000000040 is located 0 bytes inside of 104-byte region [0x60b000000040,0x60b0000000a8)
+freed by thread T0 here:
+    #0 0x10c1c6e1d in wrap__ZdaPv+0x7d (libclang_rt.asan_osx_dynamic.dylib:x86_64h+0x50e1d)
+    #1 0x10bba11f8 in TagList::~TagList() TagList.cpp:14
+    #2 0x10bba1248 in TagList::~TagList() TagList.cpp:13
+    #3 0x10bb9c536 in main taglist_demo.cpp:18

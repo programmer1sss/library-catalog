@@ -10,6 +10,10 @@ TagList::TagList(std::size_t capacity)
 {
 }
 
+TagList::~TagList() {          
+    delete[] items_;
+}
+
 void TagList::add(const std::string &tag)
 {
     if (size_ >= capacity_)

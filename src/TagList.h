@@ -8,6 +8,7 @@ class TagList
 public:
     TagList() = default;
     explicit TagList(std::size_t capacity);
+    ~TagList();  
 
     void add(const std::string &tag);
 

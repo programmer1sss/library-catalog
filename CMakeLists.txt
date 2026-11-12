@@ -22,7 +22,7 @@ function(apply_warnings_and_sanitizers target)
     endif()
 endfunction()
 
-# ── Book demo ──
+# ── Демо Book (зі старим main.cpp) ──
 add_executable(book_demo
     src/main.cpp
     src/book.cpp
@@ -32,12 +32,30 @@ target_compile_features(book_demo PRIVATE cxx_std_17)
 target_include_directories(book_demo PRIVATE src)
 apply_warnings_and_sanitizers(book_demo)
 
-# ── TagList demo (крок 1: без деструктора, навмисний витік) ──
+# ── Демо TagList (Кроки 1-4) ──
 add_executable(taglist_demo
     taglist_demo.cpp
     src/TagList.cpp
-    
 )
 target_compile_features(taglist_demo PRIVATE cxx_std_17)
 target_include_directories(taglist_demo PRIVATE src)
 apply_warnings_and_sanitizers(taglist_demo)
+
+# ── Демо Move (Крок 5) ──
+add_executable(move_demo
+    move_demo.cpp
+    src/TagList.cpp
+)
+target_compile_features(move_demo PRIVATE cxx_std_17)
+target_include_directories(move_demo PRIVATE src)
+apply_warnings_and_sanitizers(move_demo)
+
+# ── Демо Library (Крок 6) ──
+add_executable(library_demo
+    library_demo.cpp
+    src/book.cpp
+    src/TagList.cpp
+)
+target_compile_features(library_demo PRIVATE cxx_std_17)
+target_include_directories(library_demo PRIVATE src)
+apply_warnings_and_sanitizers(library_demo)

@@ -1,19 +1,17 @@
 #include "book.h"
 
-#include <iostream>    // std::clog
+#include <iostream>
 #include <stdexcept>
 #include <string>
-#include <utility>     // std::move
+#include <utility>
 
 namespace {
 int gLive = 0;
 }
 
-// --- Конструктор за замовчуванням: делегує повному ---
 Book::Book()
     : Book("(untitled)", "", "", 1450, 0) {}
 
-// --- Повний конструктор: єдине місце, де інкрементується gLive ---
 Book::Book(std::string title,
            std::string author,
            std::string isbn,
@@ -26,7 +24,6 @@ Book::Book(std::string title,
       totalCopies_(totalCopies),
       available_(totalCopies)
 {
-    // Перевірки інваріанту — у тілі, після ініціалізації полів.
     if (title_.empty()) {
         throw std::invalid_argument("Book: empty title");
     }
@@ -40,64 +37,22 @@ Book::Book(std::string title,
         throw std::invalid_argument("Book: totalCopies must be >= 0");
     }
 
-    // Логуємо ТІЛЬКИ після успішної перевірки інваріанту,
-    // щоб не було "ctor" для об'єкта, який одразу кине виняток.
     ++gLive;
     std::clog << "ctor  " << title_ << "  live=" << gLive << '\n';
 }
 
-// --- Скорочений конструктор: делегує повному ---
 Book::Book(std::string title, int year)
     : Book(std::move(title), std::string{}, std::string{}, year, 0) {}
 
-// --- Переміщувальний конструктор ---
-// gLive НЕ змінюємо: об'єкт не створюється і не знищується, лише переїжджає.
-Book::Book(Book&& other) noexcept
-    : title_(std::move(other.title_)),
-      author_(std::move(other.author_)),
-      isbn_(std::move(other.isbn_)),
-      year_(other.year_),
-      totalCopies_(other.totalCopies_),
-      available_(other.available_)
-{
-    std::clog << "move  " << title_ << "  live=" << gLive << '\n';
+// Раніше тут були Book(Book&&) та operator=(Book&&).
+// Для Rule of Zero ми їх видалили, щоб компілятор сам
+// згенерував копіювання та переміщення.
 
-    // moved-from: валідний, але «порожній» стан
-    other.title_ = "(moved-from)";
-    other.author_.clear();
-    other.isbn_.clear();
-    other.year_ = 1450;
-    other.totalCopies_ = 0;
-    other.available_ = 0;
-}
-
-// --- Переміщувальне присвоєння ---
-Book& Book::operator=(Book&& other) noexcept {
-    if (this != &other) {
-        title_ = std::move(other.title_);
-        author_ = std::move(other.author_);
-        isbn_ = std::move(other.isbn_);
-        year_ = other.year_;
-        totalCopies_ = other.totalCopies_;
-        available_ = other.available_;
-
-        other.title_ = "(moved-from)";
-        other.author_.clear();
-        other.isbn_.clear();
-        other.year_ = 1450;
-        other.totalCopies_ = 0;
-        other.available_ = 0;
-    }
-    return *this;
-}
-
-// --- Деструктор ---
 Book::~Book() {
     --gLive;
     std::clog << "dtor  " << title_ << "  live=" << gLive << '\n';
 }
 
-// --- Гетери ---
 const std::string& Book::getTitle() const { return title_; }
 const std::string& Book::getAuthor() const { return author_; }
 const std::string& Book::getIsbn() const { return isbn_; }
@@ -105,12 +60,10 @@ int Book::getYear() const { return year_; }
 int Book::getTotalCopies() const { return totalCopies_; }
 int Book::getAvailableCopies() const { return available_; }
 
-// --- Обчислювальні методи ---
 int Book::lentOut() const { return totalCopies_ - available_; }
 bool Book::isAvailable() const { return available_ > 0; }
 bool Book::isOlderThan(int y) const { return year_ < y; }
 
-// --- Операції ---
 bool Book::lend() {
     if (available_ <= 0) return false;
     --available_;
@@ -130,7 +83,6 @@ bool Book::addCopies(int n) {
     return true;
 }
 
-// --- Інваріант ---
 bool Book::checkInvariant() const {
     return !title_.empty() &&
            year_ >= 1450 && year_ <= 2026 &&

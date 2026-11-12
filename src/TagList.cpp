@@ -1,9 +1,8 @@
 #include "TagList.h"
 
 #include <stdexcept>
-#include <utility>   // std::swap, std::move
+#include <utility>
 
-// ── Визначення статичних лічильників ──
 std::size_t TagList::copies_ = 0;
 std::size_t TagList::moves_  = 0;
 
@@ -22,7 +21,7 @@ TagList::TagList(const TagList& other)
     for (std::size_t i = 0; i < size_; ++i) {
         items_[i] = other.items_[i];
     }
-    ++copies_;                                     // ← лічильник копій
+    ++copies_;
 }
 
 TagList::TagList(TagList&& other) noexcept
@@ -30,28 +29,28 @@ TagList::TagList(TagList&& other) noexcept
       size_(other.size_),
       capacity_(other.capacity_)
 {
-    other.items_    = nullptr;                     // ← обнуляємо джерело
-    other.size_     = 0;
+    other.items_ = nullptr;
+    other.size_ = 0;
     other.capacity_ = 0;
-    ++moves_;                                      // ← лічильник переміщень
+    ++moves_;
 }
 
-TagList& TagList::operator=(TagList other) {       // copy-and-swap (крок 4)
+TagList& TagList::operator=(TagList other) {
     swap(*this, other);
     return *this;
 }
 
 TagList& TagList::operator=(TagList&& other) noexcept {
     if (this != &other) {
-        delete[] items_;                           // звільняємо СВІЙ блок
-        items_    = other.items_;                  // забираємо блок джерела
-        size_     = other.size_;
+        delete[] items_;
+        items_ = other.items_;
+        size_ = other.size_;
         capacity_ = other.capacity_;
 
-        other.items_    = nullptr;                 // ← обнуляємо джерело
-        other.size_     = 0;
+        other.items_ = nullptr;
+        other.size_ = 0;
         other.capacity_ = 0;
-        ++moves_;                                  // ← лічильник переміщень
+        ++moves_;
     }
     return *this;
 }
@@ -62,8 +61,8 @@ TagList::~TagList() {
 
 void swap(TagList& a, TagList& b) noexcept {
     using std::swap;
-    swap(a.items_,    b.items_);
-    swap(a.size_,     b.size_);
+    swap(a.items_, b.items_);
+    swap(a.size_, b.size_);
     swap(a.capacity_, b.capacity_);
 }
 

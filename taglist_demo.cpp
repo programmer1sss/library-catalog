@@ -1,12 +1,15 @@
 #include <iostream>
 #include <cassert>
 #include "TagList.h"
+#include <vector>   
 
-void printTags(TagList copy) {
+void printTags(TagList copy)
+{
     std::cout << "printTags: size = " << copy.size() << '\n';
 }
 
-int main() {
+int main()
+{
     std::cout << "TagList demo (крок 4: copy-and-swap)\n\n";
 
     // ── Сценарій 1: звичайне присвоєння ──
@@ -22,7 +25,7 @@ int main() {
         assert(a.size() == 2);
         assert(a.at(0) == "beta");
         assert(a.at(1) == "gamma");
-        assert(b.size() == 2);              // b не змінився
+        assert(b.size() == 2); // b не змінився
         std::cout << '\n';
     }
 
@@ -51,10 +54,10 @@ int main() {
         a.add("z");
         const std::size_t before = a.size();
         std::cout << "до:   a.size=" << before << '\n';
-        TagList& alias = a;    
-        a = alias;  
+        TagList &alias = a;
+        a = alias;
         std::cout << "після: a.size=" << a.size() << '\n';
-        assert(a.size() == before);          // ← ключова перевірка
+        assert(a.size() == before); // ← ключова перевірка
         assert(a.at(0) == "x");
         assert(a.at(1) == "y");
         assert(a.at(2) == "z");
@@ -62,5 +65,26 @@ int main() {
     }
 
     std::cout << "Готово: ASan має мовчати.\n";
+
+    std::cout << "TagList move demo (крок 5)\n";
+    std::cout << "Без reserve: 8 push_back у std::vector<TagList>\n\n";
+
+    TagList::resetCounters();
+
+    {
+        std::vector<TagList> v; // без reserve — будуть реаллокації
+        for (int i = 0; i < 8; ++i)
+        {
+            TagList t(2);
+            t.add("tag" + std::to_string(i));
+            v.push_back(std::move(t)); // move всередину вектора
+        }
+        std::cout << "vector.size = " << v.size() << '\n';
+    }
+    // ↑ тут vector знищується, усі TagList у ньому — теж (dtor)
+
+    std::cout << "copies = " << TagList::copies() << '\n';
+    std::cout << "moves  = " << TagList::moves() << '\n';
+
     return 0;
 }

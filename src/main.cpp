@@ -104,6 +104,38 @@ int main()
     std::cout << "m1 (у копійках): " << m1.totalCents() << "\n";
     std::cout << "m2 (у копійках): " << m2.totalCents() << "\n";
 
+
+    // ────────────────────────────────────────────────────────────
+    // ЛР5: Крок 2. Арифметика через канонічну пару
+    // ────────────────────────────────────────────────────────────
+    printSeparator("ЛР5: Крок 2. Арифметика через канонічну пару");
+
+    Money a(100, 50); // 100.50
+    Money bb(25, 25);  // 25.25
+
+    std::cout << "a = " << a.hryvnias() << " грн " << a.kopecks() << " коп\n";
+    std::cout << "b = " << bb.hryvnias() << " грн " << bb.kopecks() << " коп\n\n";
+
+    // a + b
+    Money sum = a + bb;
+    std::cout << "a + b = " << sum.hryvnias() << " грн " << sum.kopecks() << " коп\n";
+
+    // a - b
+    Money diff = a - bb;
+    std::cout << "a - b = " << diff.hryvnias() << " грн " << diff.kopecks() << " коп\n";
+
+    // a * 3
+    Money mul1 = a * 3;
+    std::cout << "a * 3 = " << mul1.hryvnias() << " грн " << mul1.kopecks() << " коп\n";
+
+    // 3 * a
+    Money mul2 = 3 * a;
+    std::cout << "3 * a = " << mul2.hryvnias() << " грн " << mul2.kopecks() << " коп\n";
+
+    // -a
+    Money neg = -a;
+    std::cout << "-a = " << neg.hryvnias() << " грн " << neg.kopecks() << " коп\n";
+
     printSeparator("ДЕМОНСТРАЦІЯ ЗАВЕРШЕНА");
     return 0;
 }

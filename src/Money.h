@@ -18,6 +18,28 @@ public:
     int kopecks() const;
     long long totalCents() const;
 
+    // ── Складені присвоєння (канонічна пара) ──
+    Money& operator+=(const Money& other);
+    Money& operator-=(const Money& other);
+    Money& operator*=(int factor); // множення на ціле число
+
+    // ── Унарний мінус ──
+    Money operator-() const;
+
 private:
     long long cents_ = 0; // Сума в копійках
 };
+
+// ── Вільні оператори (поза класом, але в тому самому заголовку) ──
+
+// Додавання
+Money operator+(Money lhs, const Money& rhs);
+
+// Віднімання
+Money operator-(Money lhs, const Money& rhs);
+
+// Множення (множник справа)
+Money operator*(Money lhs, int factor);
+
+// Множення (множник зліва)
+Money operator*(int factor, Money rhs);

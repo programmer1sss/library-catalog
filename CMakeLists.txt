@@ -71,6 +71,15 @@ target_compile_features(library_demo PRIVATE cxx_std_17)
 target_include_directories(library_demo PRIVATE src)
 apply_warnings_and_sanitizers(library_demo)
 
+add_executable(network_inventory
+    src/main.cpp
+    src/Money.cpp
+    src/book.cpp       
+    src/TagList.cpp     
+)
+target_include_directories(network_inventory PRIVATE src)
+apply_warnings_and_sanitizers(network_inventory)
+
 # ════════════════════════════════════════════════════════════════
 #  ТЕСТИ (Крок 7)
 # ════════════════════════════════════════════════════════════════

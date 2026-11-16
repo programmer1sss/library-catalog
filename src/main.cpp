@@ -5,9 +5,11 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <fstream>
 #include "book.h"
 #include "TagList.h"
 #include "Money.h"
+#include "library.h"
 
 void print(const Book &b)
 {
@@ -77,7 +79,6 @@ int main()
 
     assert(b.checkInvariant());
 
-    // ── TagList demo ──
     std::cout << "\nTagList demo (крок 1: без деструктора)\n";
     TagList tags(4);
     tags.add("cpp");
@@ -196,6 +197,72 @@ int main()
         if (!(in >> bk)) std::cout << "Book FAIL: " << bk << " (лишилося попереднім: " << before << ")\n";
         else std::cout << "Book OK (неочікувано)\n";
     }
+
+    // ────────────────────────────────────────────────────────────
+    // ЛР5: Крок 6. Замкнути цикл «запис — читання»
+    // ────────────────────────────────────────────────────────────
+    printSeparator("ЛР5: Крок 6. Запис та читання каталогу Library");
+
+    Library libOriginal;
+    libOriginal.addBook(Book("1984", "George Orwell", "9780451524935", 1949, 3));
+    libOriginal.addBook(Book("The Hobbit", "J.R.R. Tolkien", "9780547928227", 1937, 2));
+    libOriginal.addBook(Book("Clean Code", "Robert C. Martin", "9780132350884", 2008, 1));
+
+    std::cout << "Оригінальний каталог (" << libOriginal.size() << " книг):\n";
+    for (std::size_t i = 0; i < libOriginal.size(); ++i) {
+        std::cout << "  " << libOriginal.at(i) << '\n';
+    }
+
+    {
+        std::ofstream outFile("catalog.txt");
+        if (!outFile) {
+            std::cerr << "Помилка відкриття файлу для запису!\n";
+            return 1;
+        }
+        libOriginal.save(outFile);
+        std::cout << "\nКаталог збережено у файл catalog.txt\n";
+    }
+
+    Library libRestored;
+    {
+        std::ifstream inFile("catalog.txt");
+        if (!inFile) {
+            std::cerr << "Помилка відкриття файлу для читання!\n";
+            return 1;
+        }
+        libRestored.load(inFile);
+        std::cout << "Каталог прочитано з файлу (" << libRestored.size() << " книг).\n";
+    }
+
+    std::cout << "\nПорівняння каталогів:\n";
+    bool sizesMatch = (libOriginal.size() == libRestored.size());
+    bool elementsMatch = false;
+    if (sizesMatch) {
+        elementsMatch = std::equal(
+            libOriginal.books().begin(), libOriginal.books().end(),
+            libRestored.books().begin()
+        );
+    }
+
+    if (sizesMatch && elementsMatch) {
+        std::cout << "  Розміри збігаються: " << libOriginal.size() << " == " << libRestored.size() << '\n';
+        std::cout << "  std::equal: true\n";
+        std::cout << "\n  КАТАЛОГ ВІДНОВЛЕНО БЕЗ ВТРАТ!\n";
+    } else {
+        std::cout << "  ПОМИЛКА: каталоги відрізняються!\n";
+        if (!sizesMatch) {
+            std::cout << "  Розміри: " << libOriginal.size() << " != " << libRestored.size() << '\n';
+        }
+        if (!elementsMatch) {
+            std::cout << "  Деякі елементи не збігаються.\n";
+        }
+    }
+
+    std::cout << "\nПеревірка стійкості до зіпсованих даних:\n";
+    std::istringstream badStream("George Orwell \"1984\" nineteenth 3/3\n");
+    Library libBad;
+    libBad.load(badStream);
+    std::cout << "  Зіпсований рядок проігноровано. Розмір: " << libBad.size() << " (очікується 0)\n";
 
     printSeparator("ДЕМОНСТРАЦІЯ ЗАВЕРШЕНА");
     return 0;

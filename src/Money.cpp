@@ -32,7 +32,6 @@ bool operator<(const Money& lhs, const Money& rhs) {
     return lhs.totalCents() < rhs.totalCents();
 }
 
-// ── Виведення ──
 std::ostream& operator<<(std::ostream& os, const Money& m) {
     const auto saved = os.flags();
     
@@ -52,7 +51,6 @@ std::ostream& operator<<(std::ostream& os, const Money& m) {
     return os;
 }
 
-// ── Введення ──
 std::istream& operator>>(std::istream& is, Money& m) {
     std::string s;
     if (!(is >> s)) {

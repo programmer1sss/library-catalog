@@ -23,22 +23,19 @@ function(apply_warnings_and_sanitizers target)
     endif()
 endfunction()
 
-# ════════════════════════════════════════════════════════════════
-#  ДЕМО-ЦІЛІ (Кроки 1–6 ЛР4 + Кроки 1-5 ЛР5)
-# ════════════════════════════════════════════════════════════════
-
-# Демо Book (використовує TagList та Money)
+# ── Головна ціль ──
 add_executable(book_demo
     src/main.cpp
     src/book.cpp
     src/TagList.cpp
     src/Money.cpp
+    src/library.cpp
 )
 target_compile_features(book_demo PRIVATE cxx_std_17)
 target_include_directories(book_demo PRIVATE src)
 apply_warnings_and_sanitizers(book_demo)
 
-# Тести (якщо є)
+# ── Тести ──
 enable_testing()
 
 include(FetchContent)

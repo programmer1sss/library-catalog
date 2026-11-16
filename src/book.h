@@ -2,12 +2,11 @@
 
 #include <string>
 #include <tuple>
-#include <iostream> // Для std::ostream
+#include <iostream>
 #include "TagList.h"
 
 class Book {
 public:
-    // ... (ваші конструктори та методи без змін) ...
     Book();
     Book(std::string title, std::string author, std::string isbn, int year, int totalCopies);
     Book(std::string title, int year);
@@ -56,5 +55,6 @@ inline bool operator>(const Book& lhs, const Book& rhs)  { return rhs < lhs; }
 inline bool operator<=(const Book& lhs, const Book& rhs) { return !(rhs < lhs); }
 inline bool operator>=(const Book& lhs, const Book& rhs) { return !(lhs < rhs); }
 
-// ── Виведення Book ──
+// ── Виведення / введення Book ──
 std::ostream& operator<<(std::ostream& os, const Book& b);
+std::istream& operator>>(std::istream& is, Book& b);

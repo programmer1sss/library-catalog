@@ -1,6 +1,6 @@
 #include "book.h"
 #include <iostream>
-#include <iomanip>      // std::quoted
+#include <iomanip>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -90,7 +90,7 @@ bool Book::isValidIsbn(const std::string& isbn) {
     return true;
 }
 
-// ── Виведення Book (Крок 4) ──
+// ── Виведення Book ──
 std::ostream& operator<<(std::ostream& os, const Book& b) {
     const auto saved = os.flags();
     os << b.getAuthor() << ' '
@@ -99,4 +99,38 @@ std::ostream& operator<<(std::ostream& os, const Book& b) {
        << b.getAvailableCopies() << '/' << b.getTotalCopies();
     os.flags(saved);
     return os;
+}
+
+// ── Введення Book ──
+std::istream& operator>>(std::istream& is, Book& b) {
+    std::string author;
+    std::string title;
+    int year = 0;
+    int available = 0;
+    int total = 0;
+    char slash = '\0';
+
+    if (!(is >> author)) return is;
+    if (!(is >> std::quoted(title))) return is;
+    if (!(is >> year)) return is;
+    if (!(is >> available >> slash >> total)) return is;
+
+    if (slash != '/') {
+        is.setstate(std::ios::failbit);
+        return is;
+    }
+
+    if (title.empty() || year < 1450 || year > 2026
+        || total < 0 || available < 0 || available > total) {
+        is.setstate(std::ios::failbit);
+        return is;
+    }
+
+    b = Book(title, author, "", year, total);
+    int toLend = total - available;
+    for (int i = 0; i < toLend; ++i) {
+        b.lend();
+    }
+
+    return is;
 }

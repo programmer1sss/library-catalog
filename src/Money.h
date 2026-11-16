@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstddef>
-#include <iostream> // Для std::ostream
+#include <iostream>
 
 class Money {
 public:
@@ -12,6 +12,7 @@ public:
     int kopecks() const;
     long long totalCents() const;
 
+    // ── Складені присвоєння ──
     Money& operator+=(const Money& other);
     Money& operator-=(const Money& other);
     Money& operator*=(int factor);
@@ -30,11 +31,11 @@ Money operator*(int factor, Money rhs);
 // ── Порівняння ──
 bool operator==(const Money& lhs, const Money& rhs);
 bool operator<(const Money& lhs, const Money& rhs);
-
 inline bool operator!=(const Money& lhs, const Money& rhs) { return !(lhs == rhs); }
 inline bool operator>(const Money& lhs, const Money& rhs)  { return rhs < lhs; }
 inline bool operator<=(const Money& lhs, const Money& rhs) { return !(rhs < lhs); }
 inline bool operator>=(const Money& lhs, const Money& rhs) { return !(lhs < rhs); }
 
-// ── Виведення в потік ──
+// ── Виведення / введення ──
 std::ostream& operator<<(std::ostream& os, const Money& m);
+std::istream& operator>>(std::istream& is, Money& m);

@@ -1,8 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
-#include <algorithm> // Для std::sort
-#include <set>       // Для std::set
+#include <algorithm>
+#include <set>
+#include <sstream>
 #include <string>
 #include "book.h"
 #include "TagList.h"
@@ -76,13 +77,11 @@ int main()
 
     assert(b.checkInvariant());
 
-    //+++++++++++++++++++++++++++++
+    // ── TagList demo ──
     std::cout << "\nTagList demo (крок 1: без деструктора)\n";
-
     TagList tags(4);
     tags.add("cpp");
     tags.add("raii");
-
     std::cout << "size = " << tags.size() << '\n';
     std::cout << "Готово. ASan не повинен скаржитися (деструктор уже додано).\n";
 
@@ -90,10 +89,8 @@ int main()
     // ЛР5: Крок 1. Каркас типу Money
     // ────────────────────────────────────────────────────────────
     printSeparator("ЛР5: Крок 1. Каркас типу Money");
-
-    Money m1(12, 50); // 12 грн 50 коп
-    Money m2(100, 0); // 100 грн 00 коп
-
+    Money m1(12, 50);
+    Money m2(100, 0);
     std::cout << "m1: " << m1.hryvnias() << " грн " << m1.kopecks() << " коп\n";
     std::cout << "m2: " << m2.hryvnias() << " грн " << m2.kopecks() << " коп\n";
     std::cout << "m1 (у копійках): " << m1.totalCents() << "\n";
@@ -103,25 +100,18 @@ int main()
     // ЛР5: Крок 2. Арифметика через канонічну пару
     // ────────────────────────────────────────────────────────────
     printSeparator("ЛР5: Крок 2. Арифметика через канонічну пару");
-
-    Money a(100, 50); // 100.50
-    Money bb(25, 25); // 25.25
-
+    Money a(100, 50);
+    Money bb(25, 25);
     std::cout << "a = " << a.hryvnias() << " грн " << a.kopecks() << " коп\n";
     std::cout << "b = " << bb.hryvnias() << " грн " << bb.kopecks() << " коп\n\n";
-
     Money sum = a + bb;
     std::cout << "a + b = " << sum.hryvnias() << " грн " << sum.kopecks() << " коп\n";
-
     Money diff = a - bb;
     std::cout << "a - b = " << diff.hryvnias() << " грн " << diff.kopecks() << " коп\n";
-
     Money mul1 = a * 3;
     std::cout << "a * 3 = " << mul1.hryvnias() << " грн " << mul1.kopecks() << " коп\n";
-
     Money mul2 = 3 * a;
     std::cout << "3 * a = " << mul2.hryvnias() << " грн " << mul2.kopecks() << " коп\n";
-
     Money neg = -a;
     std::cout << "-a = " << neg.hryvnias() << " грн " << neg.kopecks() << " коп\n";
 
@@ -129,12 +119,9 @@ int main()
     // ЛР5: Крок 3. Порівняння та впорядкування
     // ────────────────────────────────────────────────────────────
     printSeparator("ЛР5: Крок 3. Порівняння Money та впорядкування Book");
-
-    // 1. Перевірка операторів Money (використовуємо нові імена)
     Money m10(10, 50);
     Money m20(20, 0);
     Money m30(10, 50);
-
     std::cout << "Money:\n";
     std::cout << "m10 == m30: " << (m10 == m30 ? "true" : "false") << " (очікується true)\n";
     std::cout << "m10 != m20: " << (m10 != m20 ? "true" : "false") << " (очікується true)\n";
@@ -143,7 +130,6 @@ int main()
     std::cout << "m10 <= m30: " << (m10 <= m30 ? "true" : "false") << " (очікується true)\n";
     std::cout << "m10 >= m30: " << (m10 >= m30 ? "true" : "false") << " (очікується true)\n\n";
 
-    // 2. Впорядкування Book
     std::vector<Book> books;
     books.emplace_back("1984", "George Orwell", "9780451524935", 1949, 3);
     books.emplace_back("The Hobbit", "J.R.R. Tolkien", "9780547928227", 1937, 2);
@@ -152,46 +138,64 @@ int main()
     books.emplace_back("Nineteen Eighty-Four", "George Orwell", "9780451524935", 1949, 1);
 
     std::cout << "До сортування:\n";
-    for (const auto &bk : books)
-    {
+    for (const auto &bk : books) {
         std::cout << "  " << bk.getAuthor() << " - " << bk.getTitle() << " (" << bk.getYear() << ")\n";
     }
-
     std::sort(books.begin(), books.end());
-
     std::cout << "\nПісля сортування (за автором, потім назвою, потім роком):\n";
-    for (const auto &bk : books)
-    {
+    for (const auto &bk : books) {
         std::cout << "  " << bk.getAuthor() << " - " << bk.getTitle() << " (" << bk.getYear() << ")\n";
     }
 
-    // 3. Додавання в std::set
     std::set<Book> bookSet(books.begin(), books.end());
-
     std::cout << "\nРозмір вектору: " << books.size() << "\n";
     std::cout << "Розмір множини: " << bookSet.size() << " (менше через дублікати за ISBN)\n";
-
     std::cout << "Елементи множини:\n";
-    for (const auto &bk : bookSet)
-    {
+    for (const auto &bk : bookSet) {
         std::cout << "  " << bk.getAuthor() << " - " << bk.getTitle() << " (ISBN: " << bk.getIsbn() << ")\n";
     }
 
-     // ────────────────────────────────────────────────────────────
+    // ────────────────────────────────────────────────────────────
     // ЛР5: Крок 4. Виведення в потік
     // ────────────────────────────────────────────────────────────
     printSeparator("ЛР5: Крок 4. Виведення в потік");
-
     Book sampleBook("1984", "George Orwell", "9780451524935", 1949, 3);
-    sampleBook.lend(); // видалили одну книгу (2/3)
+    sampleBook.lend();
     Money fine(12, 50);
-
-    // Перевірка ланцюжка
     std::cout << sampleBook << " — " << fine << '\n';
-
-    // Перевірка, що прапорці відновлено: наступний вивід числа не має зайвих нулів
     std::cout << "Після виводу Money: " << 42 << '\n';
     std::cout << "Ще одне число: " << 7 << '\n';
+
+    // ────────────────────────────────────────────────────────────
+    // ЛР5: Крок 5. Введення з потоку
+    // ────────────────────────────────────────────────────────────
+    printSeparator("ЛР5: Крок 5. Введення з потоку");
+    {
+        std::istringstream in("12.50");
+        Money m;
+        if (in >> m) std::cout << "Money OK: " << m << '\n';
+        else std::cout << "Money FAIL (неочікувано)\n";
+    }
+    {
+        std::istringstream in("12.abc");
+        Money m(1, 0);
+        Money before = m;
+        if (!(in >> m)) std::cout << "Money FAIL: " << m << " (лишилося попереднім: " << before << ")\n";
+        else std::cout << "Money OK (неочікувано)\n";
+    }
+    {
+        std::istringstream in("George Orwell \"1984\" 1949 2/3");
+        Book bk;
+        if (in >> bk) std::cout << "Book OK: " << bk << '\n';
+        else std::cout << "Book FAIL (неочікувано)\n";
+    }
+    {
+        std::istringstream in("George Orwell \"1984\" nineteenth 2/3");
+        Book bk("Some Title", "Some Author", "", 2000, 1);
+        Book before = bk;
+        if (!(in >> bk)) std::cout << "Book FAIL: " << bk << " (лишилося попереднім: " << before << ")\n";
+        else std::cout << "Book OK (неочікувано)\n";
+    }
 
     printSeparator("ДЕМОНСТРАЦІЯ ЗАВЕРШЕНА");
     return 0;

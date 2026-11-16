@@ -1,5 +1,6 @@
 #include "Money.h"
-#include <iomanip> // Для std::setw, std::setfill
+#include <iomanip>
+#include <string>
 
 Money::Money(long long hryvnias, int kopecks)
     : cents_(hryvnias * 100 + kopecks) {}
@@ -31,16 +32,9 @@ bool operator<(const Money& lhs, const Money& rhs) {
     return lhs.totalCents() < rhs.totalCents();
 }
 
-// ── Виведення в потік ──
+// ── Виведення ──
 std::ostream& operator<<(std::ostream& os, const Money& m) {
-    // 1. Зберігаємо поточні прапорці потоку
     const auto saved = os.flags();
-    
-    // 2. Виводимо у форматі 123.45
-    // Примітка: обробка від'ємних сум (наприклад, -12.50) вимагає уваги.
-    // Якщо сума від'ємна, hryvnias() поверне -12, kopecks() поверне -50.
-    // Стандартний вивід буде -12.-50, що некоректно.
-    // Тому беремо абсолютне значення для копійок і додаємо мінус вручну.
     
     if (m.totalCents() < 0) {
         os << '-';
@@ -54,8 +48,65 @@ std::ostream& operator<<(std::ostream& os, const Money& m) {
 
     os << hryv << '.' << std::setw(2) << std::setfill('0') << kop;
     
-    // 3. Відновлюємо прапорці потоку
     os.flags(saved);
-    
     return os;
+}
+
+// ── Введення ──
+std::istream& operator>>(std::istream& is, Money& m) {
+    std::string s;
+    if (!(is >> s)) {
+        return is;
+    }
+
+    bool negative = false;
+    std::size_t pos = 0;
+    if (pos < s.size() && (s[pos] == '-' || s[pos] == '+')) {
+        negative = (s[pos] == '-');
+        ++pos;
+    }
+
+    std::size_t dotPos = s.find('.', pos);
+    std::string hryvPart;
+    std::string kopPart;
+
+    if (dotPos == std::string::npos) {
+        hryvPart = s.substr(pos);
+        kopPart  = "0";
+    } else {
+        hryvPart = s.substr(pos, dotPos - pos);
+        kopPart  = s.substr(dotPos + 1);
+    }
+
+    auto allDigits = [](const std::string& str) {
+        if (str.empty()) return false;
+        for (char c : str) {
+            if (c < '0' || c > '9') return false;
+        }
+        return true;
+    };
+
+    if (!allDigits(hryvPart) || (dotPos != std::string::npos && !allDigits(kopPart))) {
+        is.setstate(std::ios::failbit);
+        return is;
+    }
+
+    long long hryv = 0;
+    for (char c : hryvPart) hryv = hryv * 10 + (c - '0');
+
+    int kop = 0;
+    if (dotPos != std::string::npos) {
+        if (kopPart.size() > 2) {
+            is.setstate(std::ios::failbit);
+            return is;
+        }
+        while (kopPart.size() < 2) kopPart += '0';
+        kop = (kopPart[0] - '0') * 10 + (kopPart[1] - '0');
+    }
+
+    long long total = hryv * 100 + kop;
+    if (negative) total = -total;
+
+    m = Money(total / 100, static_cast<int>(total % 100));
+    return is;
 }

@@ -23,7 +23,7 @@ function(apply_warnings_and_sanitizers target)
     endif()
 endfunction()
 
-# ── Головна ціль ──
+# ── Головна програма ──
 add_executable(book_demo
     src/main.cpp
     src/book.cpp
@@ -47,25 +47,17 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_library(taglistv2 INTERFACE)
-target_include_directories(taglistv2 INTERFACE src)
-
-add_executable(taglist_test
-    tests/taglist_test.cpp
+# ── Тести операторів (Крок 7) ──
+add_executable(test_operators
+    tests/test_operators.cpp
+    src/Money.cpp
+    src/book.cpp
     src/TagList.cpp
 )
-target_compile_features(taglist_test PRIVATE cxx_std_17)
-target_include_directories(taglist_test PRIVATE src)
-target_link_libraries(taglist_test PRIVATE GTest::gtest_main)
-apply_warnings_and_sanitizers(taglist_test)
-
-add_executable(taglistv2_test
-    tests/taglistv2_test.cpp
-)
-target_compile_features(taglistv2_test PRIVATE cxx_std_17)
-target_link_libraries(taglistv2_test PRIVATE GTest::gtest_main taglistv2)
-apply_warnings_and_sanitizers(taglistv2_test)
+target_compile_features(test_operators PRIVATE cxx_std_17)
+target_include_directories(test_operators PRIVATE src)
+target_link_libraries(test_operators PRIVATE GTest::gtest_main)
+apply_warnings_and_sanitizers(test_operators)
 
 include(GoogleTest)
-gtest_discover_tests(taglist_test)
-gtest_discover_tests(taglistv2_test)
+gtest_discover_tests(test_operators)

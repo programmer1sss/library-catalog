@@ -3,6 +3,7 @@
 #include <cassert>
 #include "book.h"
 #include "TagList.h"
+#include "Money.h" 
 
 void print(const Book &b)
 {
@@ -18,6 +19,13 @@ void print(const Book &b)
               << " | Старша за 2000? "
               << (b.isOlderThan(2000) ? "так" : "ні")
               << std::endl;
+}
+
+void printSeparator(const std::string &title)
+{
+    std::cout << "\n==========================================\n";
+    std::cout << " " << title << "\n";
+    std::cout << "==========================================\n";
 }
 
 int main()
@@ -81,5 +89,21 @@ int main()
 
     std::cout << "Готово. ASan має повідомити про витік пам'яті.\n";
 
+     // ────────────────────────────────────────────────────────────
+    // ЛР5: Крок 1. Каркас типу Money
+    // ────────────────────────────────────────────────────────────
+    printSeparator("ЛР5: Крок 1. Каркас типу Money");
+    
+    // Створюємо два об'єкти Money
+    Money m1(12, 50);  // 12 грн 50 коп
+    Money m2(100, 0);  // 100 грн 00 коп
+
+    // Виводимо через геттери
+    std::cout << "m1: " << m1.hryvnias() << " грн " << m1.kopecks() << " коп\n";
+    std::cout << "m2: " << m2.hryvnias() << " грн " << m2.kopecks() << " коп\n";
+    std::cout << "m1 (у копійках): " << m1.totalCents() << "\n";
+    std::cout << "m2 (у копійках): " << m2.totalCents() << "\n";
+
+    printSeparator("ДЕМОНСТРАЦІЯ ЗАВЕРШЕНА");
     return 0;
 }

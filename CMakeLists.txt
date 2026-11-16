@@ -36,6 +36,7 @@ add_executable(book_demo
     src/main.cpp
     src/book.cpp
     src/TagList.cpp
+    src/Money.cpp 
 )
 target_compile_features(book_demo PRIVATE cxx_std_17)
 target_include_directories(book_demo PRIVATE src)
@@ -64,6 +65,7 @@ add_executable(library_demo
     library_demo.cpp
     src/book.cpp
     src/TagList.cpp
+    src/Money.cpp
 )
 target_compile_features(library_demo PRIVATE cxx_std_17)
 target_include_directories(library_demo PRIVATE src)

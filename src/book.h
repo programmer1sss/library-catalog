@@ -1,13 +1,13 @@
 #pragma once
 
 #include <string>
-#include <tuple> 
-#include <iostream> 
+#include <tuple>
+#include <iostream> // Для std::ostream
 #include "TagList.h"
 
 class Book {
 public:
-    // ... ваші попередні конструктори та методи без змін ...
+    // ... (ваші конструктори та методи без змін) ...
     Book();
     Book(std::string title, std::string author, std::string isbn, int year, int totalCopies);
     Book(std::string title, int year);
@@ -44,20 +44,17 @@ private:
 };
 
 // ── Порівняння Book ──
-
-// Рівність — за ISBN (ключове поле)
 inline bool operator==(const Book& lhs, const Book& rhs) {
     return lhs.getIsbn() == rhs.getIsbn();
 }
-
 inline bool operator!=(const Book& lhs, const Book& rhs) { return !(lhs == rhs); }
-
-// Порядок — лексикографічно за трьома полями (автор, назва, рік)
 inline bool operator<(const Book& lhs, const Book& rhs) {
     return std::make_tuple(lhs.getAuthor(), lhs.getTitle(), lhs.getYear())
-     < std::make_tuple(rhs.getAuthor(), rhs.getTitle(), rhs.getYear());
+         < std::make_tuple(rhs.getAuthor(), rhs.getTitle(), rhs.getYear());
 }
-
 inline bool operator>(const Book& lhs, const Book& rhs)  { return rhs < lhs; }
 inline bool operator<=(const Book& lhs, const Book& rhs) { return !(rhs < lhs); }
 inline bool operator>=(const Book& lhs, const Book& rhs) { return !(lhs < rhs); }
+
+// ── Виведення Book ──
+std::ostream& operator<<(std::ostream& os, const Book& b);

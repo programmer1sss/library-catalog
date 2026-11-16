@@ -1,14 +1,11 @@
 #include "book.h"
-
 #include <iostream>
+#include <iomanip>      // std::quoted
 #include <stdexcept>
 #include <string>
 #include <utility>
 
-namespace {
-int gLive = 0;
-}
-
+// ── Конструктори ──
 Book::Book()
     : Book("(untitled)", "", "", 1450, 0) {}
 
@@ -36,23 +33,14 @@ Book::Book(std::string title,
     if (totalCopies_ < 0) {
         throw std::invalid_argument("Book: totalCopies must be >= 0");
     }
-
-    ++gLive;
-    std::clog << "ctor  " << title_ << "  live=" << gLive << '\n';
 }
 
 Book::Book(std::string title, int year)
     : Book(std::move(title), std::string{}, std::string{}, year, 0) {}
 
-// Раніше тут були Book(Book&&) та operator=(Book&&).
-// Для Rule of Zero ми їх видалили, щоб компілятор сам
-// згенерував копіювання та переміщення.
+Book::~Book() = default;
 
-Book::~Book() {
-    --gLive;
-    std::clog << "dtor  " << title_ << "  live=" << gLive << '\n';
-}
-
+// ── Гетери ──
 const std::string& Book::getTitle() const { return title_; }
 const std::string& Book::getAuthor() const { return author_; }
 const std::string& Book::getIsbn() const { return isbn_; }
@@ -60,10 +48,12 @@ int Book::getYear() const { return year_; }
 int Book::getTotalCopies() const { return totalCopies_; }
 int Book::getAvailableCopies() const { return available_; }
 
+// ── Обчислювальні методи ──
 int Book::lentOut() const { return totalCopies_ - available_; }
 bool Book::isAvailable() const { return available_ > 0; }
 bool Book::isOlderThan(int y) const { return year_ < y; }
 
+// ── Операції ──
 bool Book::lend() {
     if (available_ <= 0) return false;
     --available_;
@@ -83,6 +73,7 @@ bool Book::addCopies(int n) {
     return true;
 }
 
+// ── Інваріант ──
 bool Book::checkInvariant() const {
     return !title_.empty() &&
            year_ >= 1450 && year_ <= 2026 &&
@@ -97,4 +88,15 @@ bool Book::isValidIsbn(const std::string& isbn) {
         if (c < '0' || c > '9') return false;
     }
     return true;
+}
+
+// ── Виведення Book (Крок 4) ──
+std::ostream& operator<<(std::ostream& os, const Book& b) {
+    const auto saved = os.flags();
+    os << b.getAuthor() << ' '
+       << std::quoted(b.getTitle()) << ' '
+       << b.getYear() << ' '
+       << b.getAvailableCopies() << '/' << b.getTotalCopies();
+    os.flags(saved);
+    return os;
 }

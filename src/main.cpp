@@ -14,6 +14,8 @@
 #include "Periodical.h"
 #include "Newspaper.h"
 #include "printCard.h"
+#include "Reader.h"
+#include "Loan.h"
 
 void print(const Book &b)
 {
@@ -50,10 +52,7 @@ int main()
     catalog.emplace_back("Clean Code", "Robert C. Martin", "9780132350884", 2008, 1);
     catalog.emplace_back("The Pragmatic Programmer", "Andrew Hunt", "9780201616224", 1999, 4);
 
-    for (const auto &book : catalog)
-    {
-        print(book);
-    }
+    for (const auto &book : catalog) print(book);
 
     std::cout << "\n--- Демонстрація операцій на першій книзі ---" << std::endl;
     Book &b = catalog[0];
@@ -61,26 +60,19 @@ int main()
 
     std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
     print(b);
-
     std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
     print(b);
-
     std::cout << "\nlend() -> " << (b.lend() ? "true" : "false") << std::endl;
     print(b);
-
     std::cout << "\nlend() (немає що видавати) -> "
               << (b.lend() ? "true" : "false") << std::endl;
-
     std::cout << "\nreturnCopy() -> " << (b.returnCopy() ? "true" : "false") << std::endl;
     print(b);
-
     std::cout << "\naddCopies(2) -> " << (b.addCopies(2) ? "true" : "false") << std::endl;
     print(b);
-
     std::cout << "\naddCopies(0) (некоректно) -> "
               << (b.addCopies(0) ? "true" : "false") << std::endl;
     print(b);
-
     assert(b.checkInvariant());
 
     std::cout << "\nTagList demo (крок 1: без деструктора)\n";
@@ -124,9 +116,7 @@ int main()
     // ЛР5: Крок 3. Порівняння та впорядкування
     // ────────────────────────────────────────────────────────────
     printSeparator("ЛР5: Крок 3. Порівняння Money та впорядкування Book");
-    Money m10(10, 50);
-    Money m20(20, 0);
-    Money m30(10, 50);
+    Money m10(10, 50), m20(20, 0), m30(10, 50);
     std::cout << "Money:\n";
     std::cout << "m10 == m30: " << (m10 == m30 ? "true" : "false") << " (очікується true)\n";
     std::cout << "m10 != m20: " << (m10 != m20 ? "true" : "false") << " (очікується true)\n";
@@ -222,10 +212,7 @@ int main()
 
     {
         std::ofstream outFile("catalog.txt");
-        if (!outFile) {
-            std::cerr << "Помилка відкриття файлу для запису!\n";
-            return 1;
-        }
+        if (!outFile) { std::cerr << "Помилка запису!\n"; return 1; }
         libOriginal.save(outFile);
         std::cout << "\nКаталог збережено у файл catalog.txt\n";
     }
@@ -233,10 +220,7 @@ int main()
     Library libRestored;
     {
         std::ifstream inFile("catalog.txt");
-        if (!inFile) {
-            std::cerr << "Помилка відкриття файлу для читання!\n";
-            return 1;
-        }
+        if (!inFile) { std::cerr << "Помилка читання!\n"; return 1; }
         libRestored.load(inFile);
         std::cout << "Каталог прочитано з файлу (" << libRestored.size() << " елементів).\n";
     }
@@ -260,12 +244,9 @@ int main()
     Periodical magazine("INV-P1", "National Geographic", 2024, 5, "щомісячно");
     Newspaper news("INV-N1", "The Times", 2024, "2024-05-15", 32);
 
-    printCard(std::cout, book2);
-    std::cout << '\n';
-    printCard(std::cout, magazine);
-    std::cout << '\n';
-    printCard(std::cout, news);
-    std::cout << '\n';
+    printCard(std::cout, book2);   std::cout << '\n';
+    printCard(std::cout, magazine); std::cout << '\n';
+    printCard(std::cout, news);    std::cout << '\n';
 
     std::cout << "Periodical monthly? " << (magazine.isMonthly() ? "так" : "ні") << '\n';
     std::cout << "Newspaper thick?   " << (news.isThick() ? "так" : "ні") << '\n';
@@ -274,7 +255,6 @@ int main()
     // ЛР6: Крок 4a. Object slicing
     // ────────────────────────────────────────────────────────────
     printSeparator("ЛР6: Крок 4a. Object slicing");
-
     Book origBook("INV-S1", "Slicing Test", "Test Author", "", 2000, 1);
     byValue(origBook);
 
@@ -292,14 +272,26 @@ int main()
     // ЛР6: Крок 5. Приховування імен та using
     // ────────────────────────────────────────────────────────────
     printSeparator("ЛР6: Крок 5. Приховування імен (name hiding)");
-
     Book demoBook("INV-D1", "Effective C++", "Scott Meyers", "", 2005, 1);
+    std::cout << "book.describe():   "; demoBook.describe();
+    std::cout << "book.describe(40): "; demoBook.describe(40);
 
-    std::cout << "book.describe():   ";
-    demoBook.describe();          // Book::describe()
+    // ────────────────────────────────────────────────────────────
+    // ЛР6: Крок 6. Композиція: Loan і Reader
+    // ────────────────────────────────────────────────────────────
+    printSeparator("ЛР6: Крок 6. Композиція: Loan і Reader");
 
-    std::cout << "book.describe(40): ";
-    demoBook.describe(40);        // LibraryItem::describe(int) — доступний через using
+    Reader reader("R-001", "Тарас Шевченко");
+    Book loanBook("INV-L1", "Кобзар", "Т. Шевченко", "", 1840, 1);
+    Loan loan(reader.getCardNumber(), &loanBook, "2024-05-01", "");
+
+    std::cout << "Читач: " << reader << '\n';
+    std::cout << "Видача: " << loan << '\n';
+    std::cout << "Видано? " << (loan.isReturned() ? "так" : "ні") << '\n';
+
+    loan.setReturnDate("2024-05-20");
+    std::cout << "Після повернення: " << loan << '\n';
+    std::cout << "Видано? " << (loan.isReturned() ? "так" : "ні") << '\n';
 
     printSeparator("ДЕМОНСТРАЦІЯ ЗАВЕРШЕНА");
     return 0;

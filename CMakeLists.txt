@@ -33,6 +33,8 @@ add_executable(book_demo
     src/Periodical.cpp
     src/Newspaper.cpp
     src/printCard.cpp
+    src/Reader.cpp
+    src/Loan.cpp
 )
 target_compile_features(book_demo PRIVATE cxx_std_17)
 target_include_directories(book_demo PRIVATE src)
@@ -58,11 +60,27 @@ add_executable(test_operators
     src/Periodical.cpp
     src/Newspaper.cpp
     src/printCard.cpp
+    src/Reader.cpp
+    src/Loan.cpp
 )
 target_compile_features(test_operators PRIVATE cxx_std_17)
 target_include_directories(test_operators PRIVATE src)
 target_link_libraries(test_operators PRIVATE GTest::gtest_main)
 apply_warnings_and_sanitizers(test_operators)
 
+add_executable(test_loan_reader
+    tests/test_loan_reader.cpp
+    src/Reader.cpp
+    src/Loan.cpp
+    src/book.cpp
+    src/TagList.cpp
+    src/LibraryItem.cpp
+)
+target_compile_features(test_loan_reader PRIVATE cxx_std_17)
+target_include_directories(test_loan_reader PRIVATE src)
+target_link_libraries(test_loan_reader PRIVATE GTest::gtest_main)
+apply_warnings_and_sanitizers(test_loan_reader)
+
 include(GoogleTest)
 gtest_discover_tests(test_operators)
+gtest_discover_tests(test_loan_reader)

@@ -3,19 +3,25 @@
 #include <string>
 #include <tuple>
 #include <iostream>
+#include "LibraryItem.h"
 #include "TagList.h"
 
-class Book {
+// Book — спадкоємець LibraryItem.
+// title_ і year_ живуть у базовому класі, тут лише специфічні поля Book.
+class Book final : public LibraryItem {
 public:
     Book();
-    Book(std::string title, std::string author, std::string isbn, int year, int totalCopies);
-    Book(std::string title, int year);
-    ~Book();
+    Book(std::string inventoryId,
+         std::string title,
+         std::string author,
+         std::string isbn,
+         int year,
+         int totalCopies);
+    Book(std::string inventoryId, std::string title, int year);
+    ~Book() override;
 
-    const std::string& getTitle() const;
     const std::string& getAuthor() const;
     const std::string& getIsbn() const;
-    int getYear() const;
     int getTotalCopies() const;
     int getAvailableCopies() const;
 
@@ -31,10 +37,8 @@ public:
     bool checkInvariant() const;
 
 private:
-    std::string title_ = "(untitled)";
     std::string author_;
     std::string isbn_;
-    int year_ = 1450;
     int totalCopies_ = 0;
     int available_ = 0;
     TagList tags_{4};

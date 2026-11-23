@@ -4,8 +4,6 @@
 #include <iostream>
 #include "LibraryItem.h"
 
-// Газета — ще один спадкоємець LibraryItem.
-// Додає власні поля: дата випуску (рядок) та кількість сторінок.
 class Newspaper final : public LibraryItem {
 public:
     Newspaper(std::string inventoryId,
@@ -18,11 +16,10 @@ public:
     const std::string& getIssueDate() const { return issueDate_; }
     int getPageCount() const { return pageCount_; }
 
-    // Специфічний метод
     bool isThick() const { return pageCount_ >= 20; }
 
 private:
-    std::string issueDate_;   // напр. "2024-05-15"
+    std::string issueDate_;
     int pageCount_ = 0;
 };
 

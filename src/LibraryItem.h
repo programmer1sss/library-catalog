@@ -2,19 +2,15 @@
 
 #include <string>
 
-// Базовий клас для всіх одиниць фонду бібліотеки.
-// Містить лише спільні поля: інвентарний ідентифікатор, назву, рік.
 class LibraryItem {
 public:
-    virtual ~LibraryItem() = default;
+    virtual ~LibraryItem() = default;   // ← обов'язково virtual (для експерименту тимчасово прибирали)
 
-    // Константні геттери (доступ для похідних і зовнішнього коду).
     const std::string& getInventoryId() const { return inventoryId_; }
     const std::string& getTitle() const       { return title_; }
     int getYear() const                       { return year_; }
 
 protected:
-    // Захищений конструктор: доступний лише похідним класам.
     LibraryItem(std::string inventoryId, std::string title, int year);
 
 private:

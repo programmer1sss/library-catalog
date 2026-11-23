@@ -1,5 +1,4 @@
 #include "LibraryItem.h"
-#include <iostream>
 #include <stdexcept>
 #include <utility>
 
@@ -8,8 +7,6 @@ LibraryItem::LibraryItem(std::string inventoryId, std::string title, int year)
       title_(std::move(title)),
       year_(year)
 {
-    std::cout << "LibraryItem ctor\n";     // ← ТИМЧАСОВО
-
     if (inventoryId_.empty())
         throw std::invalid_argument("LibraryItem: empty inventory id");
     if (title_.empty())

@@ -4,5 +4,9 @@
 #include "LibraryItem.h"
 
 // Друкує "картку" будь-якої одиниці фонду.
-// Приймає посилання на базовий клас — поліморфізм у дії.
 void printCard(std::ostream& os, const LibraryItem& item);
+
+// Діагностика: демонстрація object slicing.
+// Приймає об'єкт ЗА ЗНАЧЕННЯМ — створюється копія типу LibraryItem,
+// усі поля похідного класу "зрізаються".
+void byValue(LibraryItem item);

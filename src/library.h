@@ -1,26 +1,27 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include <iostream>
-#include <string>
-#include "book.h"
+#include "LibraryItem.h"
 
 class Library {
 public:
     Library() = default;
 
-    void addBook(Book b) { books_.push_back(std::move(b)); }
+    void addItem(std::unique_ptr<LibraryItem> item) {
+        items_.push_back(std::move(item));
+    }
 
-    std::size_t size() const { return books_.size(); }
-    Book&       at(std::size_t i)       { return books_.at(i); }
-    const Book& at(std::size_t i) const { return books_.at(i); }
+    std::size_t size() const { return items_.size(); }
+    LibraryItem&       at(std::size_t i)       { return *items_.at(i); }
+    const LibraryItem& at(std::size_t i) const { return *items_.at(i); }
 
-    const std::vector<Book>& books() const { return books_; }
+    const std::vector<std::unique_ptr<LibraryItem>>& items() const { return items_; }
 
-    // ── Методи для Кроку 6 ──
     void save(std::ostream& os) const;
     void load(std::istream& is);
 
 private:
-    std::vector<Book> books_;
+    std::vector<std::unique_ptr<LibraryItem>> items_;
 };

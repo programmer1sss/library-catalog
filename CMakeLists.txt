@@ -28,7 +28,7 @@ function(apply_warnings_and_sanitizers target)
 endfunction()
 
 # ════════════════════════════════════════════════════════════════
-#  ГОЛОВНА ПРОГРАМА (ЛР5 + ЛР6 крок 1)
+#  ГОЛОВНА ПРОГРАМА (ЛР5 + ЛР6 кроки 1-3)
 # ════════════════════════════════════════════════════════════════
 
 add_executable(book_demo
@@ -37,7 +37,10 @@ add_executable(book_demo
     src/TagList.cpp
     src/Money.cpp
     src/library.cpp
-    src/LibraryItem.cpp        # ← додано на Кроці 1 ЛР6
+    src/LibraryItem.cpp
+    src/Periodical.cpp
+    src/Newspaper.cpp
+    src/printCard.cpp
 )
 target_compile_features(book_demo PRIVATE cxx_std_17)
 target_include_directories(book_demo PRIVATE src)
@@ -57,13 +60,16 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# ── Тести операторів (Крок 7 ЛР5) ──
+# Тести операторів (Крок 7 ЛР5)
 add_executable(test_operators
     tests/test_operators.cpp
     src/Money.cpp
     src/book.cpp
     src/TagList.cpp
-    src/LibraryItem.cpp        # ← додано на Кроці 1 ЛР6
+    src/LibraryItem.cpp
+    src/Periodical.cpp
+    src/Newspaper.cpp
+    src/printCard.cpp
 )
 target_compile_features(test_operators PRIVATE cxx_std_17)
 target_include_directories(test_operators PRIVATE src)

@@ -6,8 +6,6 @@
 #include "LibraryItem.h"
 #include "TagList.h"
 
-// Book — спадкоємець LibraryItem.
-// title_ і year_ живуть у базовому класі, тут лише специфічні поля Book.
 class Book final : public LibraryItem {
 public:
     Book();
@@ -18,7 +16,18 @@ public:
          int year,
          int totalCopies);
     Book(std::string inventoryId, std::string title, int year);
-    ~Book() override;
+
+    // Сумісний конструктор без inventoryId (для тестів ЛР5).
+    // inventoryId генерується як "id-" + title.
+    Book(std::string title,
+         std::string author,
+         std::string isbn,
+         int year,
+         int totalCopies)
+        : Book("id-" + title, std::move(title), std::move(author),
+               std::move(isbn), year, totalCopies) {}
+
+    ~Book() override = default;
 
     const std::string& getAuthor() const;
     const std::string& getIsbn() const;
@@ -46,7 +55,6 @@ private:
     static bool isValidIsbn(const std::string& isbn);
 };
 
-// ── Порівняння Book ──
 inline bool operator==(const Book& lhs, const Book& rhs) {
     return lhs.getIsbn() == rhs.getIsbn();
 }
@@ -59,6 +67,5 @@ inline bool operator>(const Book& lhs, const Book& rhs)  { return rhs < lhs; }
 inline bool operator<=(const Book& lhs, const Book& rhs) { return !(rhs < lhs); }
 inline bool operator>=(const Book& lhs, const Book& rhs) { return !(lhs < rhs); }
 
-// ── Виведення / введення Book ──
 std::ostream& operator<<(std::ostream& os, const Book& b);
 std::istream& operator>>(std::istream& is, Book& b);

@@ -5,7 +5,6 @@
 #include <string>
 #include <utility>
 
-// ── Конструктори ──
 Book::Book()
     : LibraryItem("(no-id)", "(untitled)", 1450),
       author_(""),
@@ -13,7 +12,6 @@ Book::Book()
       totalCopies_(0),
       available_(0)
 {
-    std::cout << "Book ctor (default)\n";
 }
 
 Book::Book(std::string inventoryId,
@@ -28,8 +26,6 @@ Book::Book(std::string inventoryId,
       totalCopies_(totalCopies),
       available_(totalCopies)
 {
-    std::cout << "Book ctor\n";
-
     if (!isbn_.empty() && !isValidIsbn(isbn_)) {
         throw std::invalid_argument("Book: invalid ISBN (expected 13 digits)");
     }
@@ -43,11 +39,6 @@ Book::Book(std::string inventoryId, std::string title, int year)
 {
 }
 
-Book::~Book() {
-    std::cout << "Book dtor\n";
-}
-
-// ── Гетери ──
 const std::string& Book::getAuthor() const { return author_; }
 const std::string& Book::getIsbn() const { return isbn_; }
 int Book::getTotalCopies() const { return totalCopies_; }
@@ -92,7 +83,6 @@ bool Book::isValidIsbn(const std::string& isbn) {
     return true;
 }
 
-// ── Виведення / введення Book (без змін у логіці) ──
 std::ostream& operator<<(std::ostream& os, const Book& b) {
     const auto saved = os.flags();
     os << b.getAuthor() << ' '
@@ -144,8 +134,6 @@ std::istream& operator>>(std::istream& is, Book& b) {
         return is;
     }
 
-    // Тут створюємо Book з новим inventoryId — оскільки з потоку його немає,
-    // використаємо щось унікальне. Для прикладу можна взяти ISBN як id.
     b = Book("id-" + title, title, author, "", year, total);
 
     int toLend = total - available;

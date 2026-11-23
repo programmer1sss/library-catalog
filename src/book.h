@@ -29,6 +29,17 @@ public:
 
     ~Book() override = default;
 
+    // ── Власний describe() у Book ──
+    void describe() const {
+        std::cout << "Книга: " << getTitle()
+                  << " (автор: " << author_
+                  << ", ISBN: " << isbn_ << ")\n";
+    }
+
+    // ✅ РЯТУЄ ВІД ПРИХОВУВАННЯ: тепер обидві версії LibraryItem::describe
+    //    і Book::describe доступні через Book.
+    using LibraryItem::describe;
+
     const std::string& getAuthor() const;
     const std::string& getIsbn() const;
     int getTotalCopies() const;
@@ -55,6 +66,7 @@ private:
     static bool isValidIsbn(const std::string& isbn);
 };
 
+// ── Порівняння Book ──
 inline bool operator==(const Book& lhs, const Book& rhs) {
     return lhs.getIsbn() == rhs.getIsbn();
 }
@@ -67,5 +79,6 @@ inline bool operator>(const Book& lhs, const Book& rhs)  { return rhs < lhs; }
 inline bool operator<=(const Book& lhs, const Book& rhs) { return !(rhs < lhs); }
 inline bool operator>=(const Book& lhs, const Book& rhs) { return !(lhs < rhs); }
 
+// ── Виведення / введення Book ──
 std::ostream& operator<<(std::ostream& os, const Book& b);
 std::istream& operator>>(std::istream& is, Book& b);
